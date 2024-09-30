@@ -1,0 +1,6 @@
+[submodule "submodules/Synchformer"]
+	path = submodules/Synchformer
+	url = git@github.com:ilpoviertola/Synchformer.git
+[submodule "submodules/ImageBind"]
+	path = submodules/ImageBind
+	url = git@github.com:ilpoviertola/ImageBind.git

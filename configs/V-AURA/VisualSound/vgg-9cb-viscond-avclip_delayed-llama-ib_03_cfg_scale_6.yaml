@@ -1,0 +1,10 @@
+gt_directory: /home/hdd/ilpo/datasets/vggsound/test-ib03_h264_video_25fps_256side_44100hz_aac
+id: vgg-9cb-viscond-avclip_delayed-llama-ib_03_cfg_scale_6
+metadata: /home/ilpo/repos/eval_generative_audio_models/data/metadata/vggsound_test_ib03.csv
+pipeline:
+  fad: {}
+  imagebind_score: {}
+  insync: {}
+  kld: {}
+sample_directory: /home/hdd/ilpo/checkpoints/synchronisonix/24-08-01T08-34-26/vggsound_clean/generated_samples_24-08-13T11-53-54
+verbose: false

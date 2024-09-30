@@ -1,0 +1,9 @@
+omegaconf==2.3.0
+torch==2.1.0
+torchvision==0.16.0
+torchaudio==2.1.0
+tqdm==4.66.5
+julius==0.2.7
+git+https://github.com/descriptinc/audiotools
+moviepy==1.0.3
+av==12.3.0

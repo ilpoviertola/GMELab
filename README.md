@@ -35,6 +35,12 @@ conda env create -f conda_env_cu12.1.yaml
 conda activate gmelab_cu12.1
 ```
 
+To download the checkpoints for the models used in the evaluation, run the shell scripts in the `checkpoints` directory:
+
+```bash
+bash checkpoints/*.sh
+```
+
 ## Data
 
 Some of the metrics are reference-based, meaning they require a reference audio or video to compare against. Make sure you have appropriate ground truth data for these metrics:
@@ -79,3 +85,15 @@ python run_evaluation.py -p ./configs/V-AURA/VisualSound -td ./configs/V-AURA/Vi
 ```
 
 Each evaluation run will generate a results YAML-file in the sample directory. The results will be saved in the table output directory as a CSV file and the plots will be saved in the plot output directory, if specified.
+
+## Acknowledgements
+
+We would like to thank following open-source repositories for their code and documentation:
+
+- [Frechet Audio Distance](https://github.com/gudgud96/frechet-audio-distance)
+- [ImageBind](https://github.com/facebookresearch/ImageBind)
+- [PaSST](https://arxiv.org/abs/2110.05069)
+- [Audiocraft](https://github.com/facebookresearch/audiocraft)
+- [Synchformer](https://github.com/v-iashin/Synchformer)
+- [SpecVQGAN](https://github.com/v-iashin/SpecVQGAN)
+- and many more...

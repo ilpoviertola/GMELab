@@ -2,7 +2,7 @@ from typing import Dict, Tuple, Union
 from pathlib import Path
 from math import ceil
 
-from omegaconf import OmegaConf
+from omegaconf import OmegaConf, DictConfig
 import torch
 from tqdm import tqdm
 
@@ -14,6 +14,9 @@ from submodules.Synchformer.scripts.train_utils import (
     prepare_inputs,
 )
 from submodules.Synchformer.dataset.transforms import make_class_grid
+
+
+BATCH_SIZE = 3
 
 
 def repeat_rgb(rgb: torch.Tensor, vfps: float, tgt_len_secs: float) -> torch.Tensor:
@@ -47,6 +50,36 @@ def repeat_video(
     return rgb, audio
 
 
+def modify_model_cfg(model_cfg: DictConfig):
+    model_cfg.model.target = "submodules.Synchformer." + model_cfg.model.target
+    model_cfg.model.params.afeat_extractor.target = (
+        "submodules.Synchformer." + model_cfg.model.params.afeat_extractor.target
+    )
+    model_cfg.model.params.vfeat_extractor.target = (
+        "submodules.Synchformer." + model_cfg.model.params.vfeat_extractor.target
+    )
+    model_cfg.model.params.transformer.target = (
+        "submodules.Synchformer." + model_cfg.model.params.transformer.target
+    )
+    model_cfg.model.params.transformer.params.pos_emb_cfg.target = (
+        "submodules.Synchformer."
+        + model_cfg.model.params.transformer.params.pos_emb_cfg.target
+    )
+    assert Path(
+        "./checkpoints/avclip_models/23-12-22T16-13-38/epoch_best.pt"
+    ).exists(), "The model checkpoint does not exist. Please download the checkpoints using the scripts in ./checkpoints/ folder."
+    model_cfg.model.params.afeat_extractor.params.ckpt_path = (
+        "./checkpoints/avclip_models/23-12-22T16-13-38/epoch_best.pt"
+    )
+    model_cfg.model.params.vfeat_extractor.params.ckpt_path = (
+        "./checkpoints/avclip_models/23-12-22T16-13-38/epoch_best.pt"
+    )
+    for t in model_cfg.transform_sequence_train:
+        t.target = "submodules.Synchformer." + t.target
+    for t in model_cfg.transform_sequence_test:
+        t.target = "submodules.Synchformer." + t.target
+
+
 def calculate_sync(
     samples: str,
     exp_name: str,
@@ -66,6 +99,7 @@ def calculate_sync(
 
     # load config
     model_cfg = OmegaConf.load(cfg_path)
+    modify_model_cfg(model_cfg)
     generated_videos_path = Path(samples)
 
     if model_cfg.data.vfps != vfps:
@@ -138,7 +172,7 @@ def calculate_sync(
             print(f"Error while transforming {vid_path_str}: {e}")
             continue
         batch.append(item)
-        if len(batch) == 3 or i == len(videos) - 1:
+        if len(batch) == BATCH_SIZE or i == len(videos) - 1:
             # prepare inputs for inference
             batch = torch.utils.data.default_collate(batch)
             aud, vid, targets = prepare_inputs(batch, device)
